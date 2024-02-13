@@ -5,12 +5,12 @@ output "id" {
 
 output "public_subnets" {
   description = "List of IDs of the public subnets"
-  value       = try(aws_subnet.public.*.id, null)
+  value       = try(aws_subnet.public[*].id, null)
 }
 
 output "private_subnets" {
   description = "List of IDs of the private subnets"
-  value       = try(aws_subnet.private.*.id, null)
+  value       = try(aws_subnet.private[*].id, null)
 }
 
 output "internet_gw" {
