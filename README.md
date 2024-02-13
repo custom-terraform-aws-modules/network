@@ -30,7 +30,7 @@ This module provides a VPC with variable public and private subnets in it. The t
 
 ```hcl
 module "network" {
-  source = "custom-terraform-aws-modules/network"
+  source = "github.com/custom-terraform-aws-modules/network"
 
   name            = "example-network"
   cidr            = "10.0.0.0/16"
