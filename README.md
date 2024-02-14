@@ -4,6 +4,13 @@
 
 This module provides a VPC with variable public and private subnets in it. The traffic of the public subnets is directly routed through the Internet Gateway and the resources in it are therefore exposed to the public internet. The traffic of the private subnets will be routed through a NAT Gateway, which will live in the first public subnet.
 
+## Requirements
+
+| Name      | Version |
+| --------- | ------- |
+| terraform | >= 1.0  |
+| aws       | >= 5.20 |
+
 ## Inputs
 
 | Name            | Description                                                                                                                          | Type           | Default       | Required |
