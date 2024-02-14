@@ -8,6 +8,10 @@ variable "cidr" {
   description = "The IPv4 CIDR block of the VPC"
   type        = string
   default     = "10.0.0.0/16"
+  validation {
+    condition = can(cidrhost(var.cidr, 0))
+    error_message = "Must be valid IPv4 CIDR"
+  }
 }
 
 variable "azs" {
@@ -20,12 +24,20 @@ variable "public_subnets" {
   description = "A list of CIDR blocks for the public subnets inside the VPC"
   type        = list(string)
   default     = []
+  validation {
+    condition = can([for v in var.public_subnets : cidrhost(v, 0)])
+    error_message = "Elements must be valid IPv4 CIDRs"
+  }
 }
 
 variable "private_subnets" {
   description = "A list of CIDR blocks for the private subnets inside the VPC"
   type        = list(string)
   default     = []
+  validation {
+    condition = can([for v in var.private_subnets : cidrhost(v, 0)])
+    error_message = "Elements must be valid IPv4 CIDRs"
+  }
 }
 
 variable "nat_gw" {

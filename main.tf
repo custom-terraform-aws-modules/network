@@ -20,7 +20,7 @@ resource "aws_subnet" "public" {
   count             = length(var.public_subnets)
   cidr_block        = var.public_subnets[count.index]
   vpc_id            = aws_vpc.main.id
-  availability_zone = lenght(var.azs) > count.index ? var.azs[count.index] : null
+  availability_zone = length(var.azs) > count.index ? var.azs[count.index] : null
 
   tags = merge(
     { "Name" = var.name },
@@ -29,8 +29,6 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_internet_gateway" "main" {
-  # if no public subnet is created we don't need an Internet Gateway
-  count  = length(var.public_subnets) > 0 ? 1 : 0
   vpc_id = aws_vpc.main.id
 
   tags = merge(
@@ -42,7 +40,7 @@ resource "aws_internet_gateway" "main" {
 resource "aws_route_table" "public" {
   # if no public subnet is created we don't need a route table
   count  = length(var.public_subnets) > 0 ? 1 : 0
-  vpc_id = aws_vpc.main[0].id
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -92,7 +90,7 @@ resource "aws_subnet" "private" {
   count             = length(var.private_subnets)
   cidr_block        = var.private_subnets[count.index]
   vpc_id            = aws_vpc.main.id
-  availability_zone = lenght(var.azs) > count.index ? var.azs[count.index] : null
+  availability_zone = length(var.azs) > count.index ? var.azs[count.index] : null
 
   tags = merge(
     { "Name" = var.name },
@@ -122,7 +120,7 @@ resource "aws_route_table" "private" {
 resource "aws_route_table_association" "private" {
   count          = length(var.private_subnets)
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private.id
+  route_table_id = aws_route_table.private[0].id
 }
 
 # setting default route table of VPC

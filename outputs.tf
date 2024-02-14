@@ -15,7 +15,7 @@ output "private_subnets" {
 
 output "internet_gw" {
   description = "The ID of the Internet Gateway"
-  value       = try(aws_internet_gateway.main[0].id, null)
+  value       = try(aws_internet_gateway.main.id, null)
 }
 
 output "nat_gw" {
