@@ -21,6 +21,7 @@ This module provides a VPC with variable public and private subnets in it. The t
 | public_subnets  | A list of CIDR blocks for the public subnets inside the VPC.                                                                         | `list(string)` | []            |    no    |
 | private_subnets | A list of CIDR blocks for the private subnets inside the VPC.                                                                        | `list(string)` | []            |    no    |
 | nat_gw          | A flag for wether or not creating a NAT Gateway in the first public subnet in order to route the private subnets traffic through it. | `bool`         | false         |    no    |
+| flow_logs       | An object for the definition for a flow log of the VPC.                                                                              | `object`       | null          |    no    |
 | tags            | A map of tags to add to all resources. Name is always set as tag and the other tags will be appended.                                | `map(string)`  | {}            |    no    |
 
 ## Outputs
@@ -45,6 +46,11 @@ module "network" {
   public_subnets  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   private_subnets = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   nat_gw          = true
+  flow_log = {
+    name_prefix       = "example-network-dev"
+    traffic_type      = "ALL"
+    retention_in_days = 7
+  }
 
   tags = {
     Project     = "example-project"

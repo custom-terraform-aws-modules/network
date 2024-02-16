@@ -129,3 +129,81 @@ resource "aws_main_route_table_association" "main" {
   vpc_id         = aws_vpc.main.id
   route_table_id = aws_route_table.private[0].id
 }
+
+################################
+# Flow Log                     #
+################################
+
+data "aws_iam_policy_document" "assume_role" {
+  count = var.flow_log != null ? 1 : 0
+
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["vpc-flow-logs.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_cloudwatch_log_group" "main" {
+  count             = var.flow_log != null ? 1 : 0
+  name              = "${try(var.flow_log["name_prefix"], "")}-flow-log"
+  retention_in_days = try(var.flow_log["retention_in_days"], 1)
+
+  tags = merge(
+    { "Name" = var.name },
+    var.tags
+  )
+}
+
+data "aws_iam_policy_document" "log" {
+  count = var.flow_log != null ? 1 : 0
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+    ]
+
+    resources = ["${aws_cloudwatch_log_group.main[0].arn}:*"]
+  }
+}
+
+resource "aws_iam_role" "main" {
+  count              = var.flow_log != null ? 1 : 0
+  name               = "${try(var.flow_log["name_prefix"], "")}-ServiceRoleForFlowLog"
+  assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
+
+  inline_policy {
+    name   = "${try(var.flow_log["name_prefix"], "")}-CloudWatchCreateLog"
+    policy = data.aws_iam_policy_document.log[0].json
+  }
+
+  tags = merge(
+    { "Name" = var.name },
+    var.tags
+  )
+}
+
+resource "aws_flow_log" "main" {
+  count                    = var.flow_log != null ? 1 : 0
+  vpc_id                   = aws_vpc.main.id
+  traffic_type             = try(var.flow_log["traffic_type"], "ALL")
+  iam_role_arn             = aws_iam_role.main[0].arn
+  log_destination          = aws_cloudwatch_log_group.main[0].arn
+  max_aggregation_interval = 60
+
+  tags = merge(
+    { "Name" = var.name },
+    var.tags
+  )
+}

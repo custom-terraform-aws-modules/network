@@ -46,6 +46,37 @@ variable "nat_gw" {
   default     = false
 }
 
+variable "flow_log" {
+  description = "An object for the definition for a flow log of the VPC"
+  type = object({
+    name_prefix       = string
+    traffic_type      = string
+    retention_in_days = number
+  })
+  default = null
+  validation {
+    condition     = length(try(var.flow_log["name_prefix"], "abc")) > 2
+    error_message = "Name prefix must be at least 3 characters"
+  }
+  validation {
+    condition = try(var.flow_log["traffic_type"], "ALL") == "ALL" || (
+      try(var.flow_log["traffic_type"], "ACCEPT") == "ACCEPT") || (
+    try(var.flow_log["traffic_type"], "REJECT") == "REJECT")
+    error_message = "Traffic type must be 'ALL', 'ACCEPT' or 'REJECT'"
+  }
+  validation {
+    condition = try(var.flow_log["retention_in_days"], 1) == 1 || (
+      try(var.flow_log["retention_in_days"], 3) == 3) || (
+      try(var.flow_log["retention_in_days"], 5) == 5) || (
+      try(var.flow_log["retention_in_days"], 7) == 7) || (
+      try(var.flow_log["retention_in_days"], 14) == 14) || (
+      try(var.flow_log["retention_in_days"], 30) == 30) || (
+      try(var.flow_log["retention_in_days"], 365) == 365) || (
+    try(var.flow_log["retention_in_days"], 0) == 0)
+    error_message = "Retention in days must be one of these values: 0, 1, 3, 5, 7, 14, 30, 365"
+  }
+}
+
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
