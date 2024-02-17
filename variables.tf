@@ -49,14 +49,14 @@ variable "nat_gw" {
 variable "flow_log" {
   description = "An object for the definition for a flow log of the VPC"
   type = object({
-    name_prefix       = string
+    identifier        = string
     traffic_type      = string
     retention_in_days = number
   })
   default = null
   validation {
-    condition     = length(try(var.flow_log["name_prefix"], "abc")) > 2
-    error_message = "Name prefix must be at least 3 characters"
+    condition     = length(try(var.flow_log["identifier"], "abc")) > 2
+    error_message = "Identifier must be at least 3 characters"
   }
   validation {
     condition = try(var.flow_log["traffic_type"], "ALL") == "ALL" || (

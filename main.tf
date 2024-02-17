@@ -151,7 +151,7 @@ data "aws_iam_policy_document" "assume_role" {
 
 resource "aws_cloudwatch_log_group" "main" {
   count             = var.flow_log != null ? 1 : 0
-  name              = "${try(var.flow_log["name_prefix"], "")}-flow-log"
+  name              = "${try(var.flow_log["identifier"], "")}-flow-log"
   retention_in_days = try(var.flow_log["retention_in_days"], 1)
 
   tags = merge(
@@ -180,11 +180,11 @@ data "aws_iam_policy_document" "log" {
 
 resource "aws_iam_role" "main" {
   count              = var.flow_log != null ? 1 : 0
-  name               = "${try(var.flow_log["name_prefix"], "")}-ServiceRoleForFlowLog"
+  name               = "${try(var.flow_log["identifier"], "")}-ServiceRoleForFlowLog"
   assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
 
   inline_policy {
-    name   = "${try(var.flow_log["name_prefix"], "")}-CloudWatchCreateLog"
+    name   = "${try(var.flow_log["identifier"], "")}-CloudWatchCreateLog"
     policy = data.aws_iam_policy_document.log[0].json
   }
 

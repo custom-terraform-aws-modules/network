@@ -7,12 +7,12 @@ provider "aws" {
   }
 }
 
-run "invalid_name_prefix" {
+run "invalid_identifier" {
   command = plan
 
   variables {
     flow_log = {
-      name_prefix       = "a"
+      identifier        = "a"
       traffic_type      = "ALL"
       retention_in_days = 1
     }
@@ -26,7 +26,7 @@ run "invalid_traffic_type" {
 
   variables {
     flow_log = {
-      name_prefix       = "abc"
+      identifier        = "abc"
       traffic_type      = "FOO"
       retention_in_days = 1
     }
@@ -40,7 +40,7 @@ run "invalid_retention_in_days" {
 
   variables {
     flow_log = {
-      name_prefix       = "abc"
+      identifier        = "abc"
       traffic_type      = "ALL"
       retention_in_days = 2
     }
@@ -54,7 +54,7 @@ run "valid_flow_log" {
 
   variables {
     flow_log = {
-      name_prefix       = "abc"
+      identifier        = "abc"
       traffic_type      = "ALL"
       retention_in_days = 1
     }

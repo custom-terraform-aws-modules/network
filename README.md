@@ -55,7 +55,7 @@ module "network" {
   private_subnets = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   nat_gw          = true
   flow_log = {
-    name_prefix       = "example-network-dev"
+    identifier        = "example-network-dev"
     traffic_type      = "ALL"
     retention_in_days = 7
   }
