@@ -77,7 +77,7 @@ module "network" {
 
 ## Contributing
 
-In order for an efficient CI workflow copy the `pre-commit` git hook from `.github/hooks` into your local `.git/hooks`. The hook formats the terraform code automatically before each commit.
+In order for a seamless CI workflow copy the `pre-commit` git hook from `.github/hooks` into your local `.git/hooks`. The hook formats the terraform code automatically before each commit.
 
 ```bash
 cp ./.github/hooks/pre-commit ./.git/hooks/pre-commit
