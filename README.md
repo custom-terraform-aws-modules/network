@@ -32,6 +32,14 @@ This module provides a VPC with variable public and private subnets in it. The t
 | flow_log        | An object for the definition for a flow log of the VPC.                                                                              | `object`       | null          |    no    |
 | tags            | A map of tags to add to all resources. Name is always set as tag and the other tags will be appended.                                | `map(string)`  | {}            |    no    |
 
+### `flow_log`
+
+| Name              | Description                                                                                                                | Type     | Default | Required |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------- | -------- | ------- | :------: |
+| identifier        | Unique identifier to differentiate global resources.                                                                       | `string` | n/a     |   yes    |
+| traffic_type      | The type of traffic to capture. Valid values: ACCEPT,REJECT, ALL.                                                          | `string` | n/a     |   yes    |
+| retention_in_days | Specifies the number of days the log events shall be retained. Valid values: 1, 3, 5, 7, 14, 30, 365 and 0 (never expire). | `number` | n/a     |   yes    |
+
 ## Outputs
 
 | Name            | Description                         |
