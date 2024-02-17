@@ -4,6 +4,14 @@
 
 This module provides a VPC with variable public and private subnets in it. The traffic of the public subnets is directly routed through the Internet Gateway and the resources in it are therefore exposed to the public internet. The traffic of the private subnets will be routed through a NAT Gateway, which will live in the first public subnet.
 
+## Contents
+
+- [Requirements](#requirements)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Example](#example)
+- [Contributing](#contributing)
+
 ## Requirements
 
 | Name      | Version |
@@ -57,4 +65,12 @@ module "network" {
     Environment = "prod"
   }
 }
+```
+
+## Contributing
+
+In order for an efficient CI workflow copy the `pre-commit` git hook from `.github/hooks` into your local `.git/hooks`. The hook formats the terraform code automatically before each commit.
+
+```bash
+cp ./.github/hooks/pre-commit ./.git/hooks/pre-commit
 ```
