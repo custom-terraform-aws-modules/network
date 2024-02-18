@@ -70,7 +70,7 @@ module "network" {
 
   tags = {
     Project     = "example-project"
-    Environment = "prod"
+    Environment = "dev"
   }
 }
 ```
