@@ -18,7 +18,7 @@ output "internet_gw" {
   value       = try(aws_internet_gateway.main.id, null)
 }
 
-output "nat_gw" {
-  description = "The ID of the NAT Gateway"
-  value       = try(aws_nat_gateway.main[0].id, null)
+output "nat_gws" {
+  description = "List of IDs of the NAT Gateways"
+  value       = try(aws_nat_gateway.main[*].id, null)
 }
