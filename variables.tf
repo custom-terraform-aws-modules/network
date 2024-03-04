@@ -1,9 +1,3 @@
-variable "name" {
-  description = "Name of this module which is used as identifier on all resources."
-  type        = string
-  default     = ""
-}
-
 variable "cidr" {
   description = "The IPv4 CIDR block of the VPC."
   type        = string
