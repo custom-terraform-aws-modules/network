@@ -5,10 +5,7 @@
 resource "aws_vpc" "main" {
   cidr_block = var.cidr
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 ################################
@@ -22,19 +19,13 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
   availability_zone = length(var.azs) > count.index ? var.azs[count.index] : null
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 resource "aws_route_table" "public" {
@@ -47,10 +38,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.main.id
   }
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 resource "aws_route_table_association" "public" {
@@ -59,26 +47,20 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public[0].id
 }
 
-# create NAT Gateway and public IP for it, if flag is true and a public subnet exists
+# create NAT Gateways and public IPs for them
 resource "aws_eip" "main" {
-  count  = var.nat_gw && length(var.public_subnets) > 0 ? 1 : 0
+  count  = var.nat_gws
   domain = "vpc"
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 resource "aws_nat_gateway" "main" {
-  count         = var.nat_gw && length(var.public_subnets) > 0 ? 1 : 0
-  allocation_id = aws_eip.main[0].id
-  subnet_id     = aws_subnet.public[0].id
+  count         = var.nat_gws
+  allocation_id = aws_eip.main[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 ################################
@@ -92,42 +74,32 @@ resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   availability_zone = length(var.azs) > count.index ? var.azs[count.index] : null
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
+}
+
+locals {
+  nat_gw_indices = [for index, value in var.private_subnets : index % var.nat_gws]
 }
 
 resource "aws_route_table" "private" {
-  # if no private subnet is created we don't need a route table
-  count  = length(var.private_subnets) > 0 ? 1 : 0
+  count  = length(var.private_subnets)
   vpc_id = aws_vpc.main.id
 
   dynamic "route" {
-    for_each = var.nat_gw && length(var.public_subnets) > 0 ? [1] : []
+    for_each = var.nat_gws > 0 ? [1] : []
     content {
       cidr_block = "0.0.0.0/0"
-      gateway_id = aws_nat_gateway.main[0].id
+      gateway_id = aws_nat_gateway.main[local.nat_gw_indices[count.index]].id
     }
   }
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 resource "aws_route_table_association" "private" {
   count          = length(var.private_subnets)
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[0].id
-}
-
-# setting default route table of VPC
-resource "aws_main_route_table_association" "main" {
-  count          = length(var.private_subnets) > 0 ? 1 : 0
-  vpc_id         = aws_vpc.main.id
-  route_table_id = aws_route_table.private[0].id
+  route_table_id = aws_route_table.private[count.index].id
 }
 
 ################################
@@ -151,13 +123,10 @@ data "aws_iam_policy_document" "assume_role" {
 
 resource "aws_cloudwatch_log_group" "main" {
   count             = var.flow_log != null ? 1 : 0
-  name              = "${try(var.flow_log["identifier"], "")}-flow-log"
-  retention_in_days = try(var.flow_log["retention_in_days"], 1)
+  name              = "${try(var.flow_log["identifier"], null)}-flow-log"
+  retention_in_days = try(var.flow_log["retention_in_days"], null)
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 data "aws_iam_policy_document" "log" {
@@ -180,30 +149,24 @@ data "aws_iam_policy_document" "log" {
 
 resource "aws_iam_role" "main" {
   count              = var.flow_log != null ? 1 : 0
-  name               = "${try(var.flow_log["identifier"], "")}-ServiceRoleForFlowLog"
+  name               = "${try(var.flow_log["identifier"], null)}-ServiceRoleForFlowLog"
   assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
 
   inline_policy {
-    name   = "${try(var.flow_log["identifier"], "")}-CloudWatchCreateLog"
+    name   = "${try(var.flow_log["identifier"], null)}-CloudWatchCreateLog"
     policy = data.aws_iam_policy_document.log[0].json
   }
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }
 
 resource "aws_flow_log" "main" {
   count                    = var.flow_log != null ? 1 : 0
   vpc_id                   = aws_vpc.main.id
-  traffic_type             = try(var.flow_log["traffic_type"], "ALL")
+  traffic_type             = try(var.flow_log["traffic_type"], null)
   iam_role_arn             = aws_iam_role.main[0].arn
   log_destination          = aws_cloudwatch_log_group.main[0].arn
   max_aggregation_interval = 60
 
-  tags = merge(
-    { "Name" = var.name },
-    var.tags
-  )
+  tags = var.tags
 }

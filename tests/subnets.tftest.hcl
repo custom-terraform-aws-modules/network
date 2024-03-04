@@ -47,6 +47,11 @@ run "no_public_subnets" {
   }
 
   assert {
+    condition     = length(aws_subnet.private) == 0
+    error_message = "Public subnet was created unexpectedly"
+  }
+
+  assert {
     condition     = length(aws_route_table.public) == 0
     error_message = "Route table for public subnets was created unexpectedly"
   }
@@ -79,8 +84,8 @@ run "valid_private_subnets" {
   }
 
   assert {
-    condition     = length(aws_route_table.private) == 1
-    error_message = "Route table for private subnets was not created"
+    condition     = length(aws_route_table.private) == length(var.private_subnets)
+    error_message = "Route tables for private subnets were not created"
   }
 }
 
@@ -89,6 +94,11 @@ run "no_private_subnets" {
 
   variables {
     private_subnets = []
+  }
+
+  assert {
+    condition     = length(aws_subnet.private) == 0
+    error_message = "Private subnet was created unexpectedly"
   }
 
   assert {
