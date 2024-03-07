@@ -23,16 +23,15 @@ This module provides a VPC with variable public and private subnets in it. The t
 
 | Name            | Description                                                                                                                                                                                                            | Type           | Default       | Required |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------- | :------: |
-| name            | Name of this module, which is used as identifier on all resources.                                                                                                                                                     | `string`       | ""            |    no    |
 | cidr            | The IPv4 CIDR block of the VPC.                                                                                                                                                                                        | `string`       | "10.0.0.0/16" |    no    |
 | azs             | A list of availability zone names in the region.                                                                                                                                                                       | `list(string)` | []            |    no    |
 | public_subnets  | A list of CIDR blocks for the public subnets inside the VPC.                                                                                                                                                           | `list(string)` | []            |    no    |
 | private_subnets | A list of CIDR blocks for the private subnets inside the VPC.                                                                                                                                                          | `list(string)` | []            |    no    |
 | nat_gws         | Number of NAT Gateways to create. NOTE: for every NAT Gateway a public subnet must exist, also it is recommended to not create more NAT Gateways than private subnets as the excessive NAT Gateways would have no use. | `number`       | 0             |    no    |
-| flow_log        | An object for the definition for a flow log of the VPC.                                                                                                                                                                | `object`       | null          |    no    |
+| flow_log_config | An object for the definition for a flow log of the VPC.                                                                                                                                                                | `object`       | null          |    no    |
 | tags            | A map of tags to add to all resources.                                                                                                                                                                                 | `map(string)`  | {}            |    no    |
 
-### `flow_log`
+### `flow_log_config`
 
 | Name              | Description                                                                                                                | Type     | Default | Required |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------- | -------- | ------- | :------: |
@@ -62,7 +61,7 @@ module "network" {
   private_subnets = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   nat_gws         = 3
 
-  flow_log = {
+  flow_log_config = {
     identifier        = "example-network-dev"
     traffic_type      = "ALL"
     retention_in_days = 7

@@ -107,7 +107,7 @@ resource "aws_route_table_association" "private" {
 ################################
 
 data "aws_iam_policy_document" "assume_role" {
-  count = var.flow_log != null ? 1 : 0
+  count = var.flow_log_config != null ? 1 : 0
 
   statement {
     effect = "Allow"
@@ -122,15 +122,15 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_cloudwatch_log_group" "main" {
-  count             = var.flow_log != null ? 1 : 0
-  name              = "${try(var.flow_log["identifier"], null)}-flow-log"
-  retention_in_days = try(var.flow_log["retention_in_days"], null)
+  count             = var.flow_log_config != null ? 1 : 0
+  name              = "${try(var.flow_log_config["identifier"], null)}-flow-log"
+  retention_in_days = try(var.flow_log_config["retention_in_days"], null)
 
   tags = var.tags
 }
 
 data "aws_iam_policy_document" "log" {
-  count = var.flow_log != null ? 1 : 0
+  count = var.flow_log_config != null ? 1 : 0
 
   statement {
     effect = "Allow"
@@ -148,12 +148,12 @@ data "aws_iam_policy_document" "log" {
 }
 
 resource "aws_iam_role" "main" {
-  count              = var.flow_log != null ? 1 : 0
-  name               = "${try(var.flow_log["identifier"], null)}-ServiceRoleForFlowLog"
+  count              = var.flow_log_config != null ? 1 : 0
+  name               = "${try(var.flow_log_config["identifier"], null)}-ServiceRoleForFlowLog"
   assume_role_policy = data.aws_iam_policy_document.assume_role[0].json
 
   inline_policy {
-    name   = "${try(var.flow_log["identifier"], null)}-CloudWatchCreateLog"
+    name   = "${try(var.flow_log_config["identifier"], null)}-CloudWatchCreateLog"
     policy = data.aws_iam_policy_document.log[0].json
   }
 
@@ -161,9 +161,9 @@ resource "aws_iam_role" "main" {
 }
 
 resource "aws_flow_log" "main" {
-  count                    = var.flow_log != null ? 1 : 0
+  count                    = var.flow_log_config != null ? 1 : 0
   vpc_id                   = aws_vpc.main.id
-  traffic_type             = try(var.flow_log["traffic_type"], null)
+  traffic_type             = try(var.flow_log_config["traffic_type"], null)
   iam_role_arn             = aws_iam_role.main[0].arn
   log_destination          = aws_cloudwatch_log_group.main[0].arn
   max_aggregation_interval = 60

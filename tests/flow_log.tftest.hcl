@@ -11,49 +11,49 @@ run "invalid_identifier" {
   command = plan
 
   variables {
-    flow_log = {
+    flow_log_config = {
       identifier        = "a"
       traffic_type      = "ALL"
       retention_in_days = 1
     }
   }
 
-  expect_failures = [var.flow_log]
+  expect_failures = [var.flow_log_config]
 }
 
 run "invalid_traffic_type" {
   command = plan
 
   variables {
-    flow_log = {
+    flow_log_config = {
       identifier        = "abc"
       traffic_type      = "FOO"
       retention_in_days = 1
     }
   }
 
-  expect_failures = [var.flow_log]
+  expect_failures = [var.flow_log_config]
 }
 
 run "invalid_retention_in_days" {
   command = plan
 
   variables {
-    flow_log = {
+    flow_log_config = {
       identifier        = "abc"
       traffic_type      = "ALL"
       retention_in_days = 2
     }
   }
 
-  expect_failures = [var.flow_log]
+  expect_failures = [var.flow_log_config]
 }
 
 run "valid_flow_log" {
   command = plan
 
   variables {
-    flow_log = {
+    flow_log_config = {
       identifier        = "abc"
       traffic_type      = "ALL"
       retention_in_days = 1
@@ -80,7 +80,7 @@ run "no_flow_log" {
   command = plan
 
   variables {
-    flow_log = null
+    flow_log_config = null
   }
 
   assert {
