@@ -41,13 +41,14 @@ This module provides a VPC with variable public and private subnets in it. The t
 
 ## Outputs
 
-| Name            | Description                         |
-| --------------- | ----------------------------------- |
-| id              | The ID of the VPC.                  |
-| public_subnets  | List of IDs of the public subnets.  |
-| private_subnets | List of IDs of the private subnets. |
-| internet_gw     | The ID of the Internet Gateway.     |
-| nat_gws         | List of IDs of the NAT Gateways.    |
+| Name            | Description                                                         |
+| --------------- | ------------------------------------------------------------------- |
+| id              | The ID of the VPC.                                                  |
+| public_subnets  | List of IDs of the public subnets.                                  |
+| private_subnets | List of IDs of the private subnets.                                 |
+| internet_gw     | The ID of the Internet Gateway.                                     |
+| nat_gws         | List of IDs of the NAT Gateways.                                    |
+| log_group_name  | The name of the CloudWatch log group created for the VPC flow logs. |
 
 ## Example
 

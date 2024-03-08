@@ -123,7 +123,7 @@ data "aws_iam_policy_document" "assume_role" {
 
 resource "aws_cloudwatch_log_group" "main" {
   count             = var.flow_log_config != null ? 1 : 0
-  name              = "${try(var.flow_log_config["identifier"], null)}-flow-log"
+  name              = "/aws/vpc/${try(var.flow_log_config["identifier"], null)}"
   retention_in_days = try(var.flow_log_config["retention_in_days"], null)
 
   tags = var.tags
