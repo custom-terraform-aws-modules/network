@@ -3,10 +3,6 @@ name: Release
 on:
   push:
     branches: ["main"]
-  workflow_run:
-    workflows: ["lint", "scan", "test"]
-    types:
-      - completed
 
 permissions:
   contents: write
@@ -15,7 +11,7 @@ permissions:
 jobs:
   release:
     runs-on: "ubuntu-latest"
-    if: ${{ success() }}
+    needs: [lint, scan, test]
 
     steps:
       - uses: rymndhng/release-on-push-action@master
