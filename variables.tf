@@ -1,3 +1,12 @@
+variable "identifier" {
+  description = "Unique identifier to differentiate global resources."
+  type        = string
+  validation {
+    condition     = length(var.identifier) > 2
+    error_message = "Identifier must be at least 3 characters"
+  }
+}
+
 variable "cidr" {
   description = "The IPv4 CIDR block of the VPC."
   type        = string
@@ -40,33 +49,28 @@ variable "nat_gws" {
   default     = 0
 }
 
-variable "flow_log_config" {
+variable "log_config" {
   description = "An object for the definition for a flow log of the VPC."
   type = object({
-    identifier        = string
     traffic_type      = string
     retention_in_days = number
   })
   default = null
   validation {
-    condition     = length(try(var.flow_log_config["identifier"], "abc")) > 2
-    error_message = "Identifier must be at least 3 characters"
-  }
-  validation {
-    condition = try(var.flow_log_config["traffic_type"], "ALL") == "ALL" || (
-      try(var.flow_log_config["traffic_type"], "ACCEPT") == "ACCEPT") || (
-    try(var.flow_log_config["traffic_type"], "REJECT") == "REJECT")
+    condition = try(var.log_config["traffic_type"], "ALL") == "ALL" || (
+      try(var.log_config["traffic_type"], "ACCEPT") == "ACCEPT") || (
+    try(var.log_config["traffic_type"], "REJECT") == "REJECT")
     error_message = "Traffic type must be 'ALL', 'ACCEPT' or 'REJECT'"
   }
   validation {
-    condition = try(var.flow_log_config["retention_in_days"], 1) == 1 || (
-      try(var.flow_log_config["retention_in_days"], 3) == 3) || (
-      try(var.flow_log_config["retention_in_days"], 5) == 5) || (
-      try(var.flow_log_config["retention_in_days"], 7) == 7) || (
-      try(var.flow_log_config["retention_in_days"], 14) == 14) || (
-      try(var.flow_log_config["retention_in_days"], 30) == 30) || (
-      try(var.flow_log_config["retention_in_days"], 365) == 365) || (
-    try(var.flow_log_config["retention_in_days"], 0) == 0)
+    condition = try(var.log_config["retention_in_days"], 1) == 1 || (
+      try(var.log_config["retention_in_days"], 3) == 3) || (
+      try(var.log_config["retention_in_days"], 5) == 5) || (
+      try(var.log_config["retention_in_days"], 7) == 7) || (
+      try(var.log_config["retention_in_days"], 14) == 14) || (
+      try(var.log_config["retention_in_days"], 30) == 30) || (
+      try(var.log_config["retention_in_days"], 365) == 365) || (
+    try(var.log_config["retention_in_days"], 0) == 0)
     error_message = "Retention in days must be one of these values: 0, 1, 3, 5, 7, 14, 30, 365"
   }
 }

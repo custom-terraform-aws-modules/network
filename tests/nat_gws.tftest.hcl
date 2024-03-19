@@ -11,7 +11,8 @@ run "no_nat_gw" {
   command = plan
 
   variables {
-    nat_gws = 0
+    identifier = "test"
+    nat_gws    = 0
   }
 
   assert {
@@ -24,7 +25,8 @@ run "multiple_nat_gws" {
   command = plan
 
   variables {
-    nat_gws = 5
+    identifier = "test"
+    nat_gws    = 5
     public_subnets = [
       "10.0.1.0/24",
       "10.0.2.0/24",
@@ -44,7 +46,8 @@ run "private_subnets_greater_then_nat_gws" {
   command = plan
 
   variables {
-    nat_gws = 3
+    identifier = "test"
+    nat_gws    = 3
     public_subnets = [
       "10.0.1.0/24",
       "10.0.2.0/24",
@@ -94,7 +97,8 @@ run "private_subnets_less_then_nat_gws" {
   command = plan
 
   variables {
-    nat_gws = 5
+    identifier = "test"
+    nat_gws    = 5
     public_subnets = [
       "10.0.1.0/24",
       "10.0.2.0/24",

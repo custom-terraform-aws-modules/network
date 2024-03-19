@@ -15,6 +15,7 @@ run "invalid_public_subnets" {
   command = plan
 
   variables {
+    identifier     = "test"
     public_subnets = ["10.0.0.0", "10.0.1.0/24"]
   }
 
@@ -25,6 +26,7 @@ run "valid_public_subnets" {
   command = plan
 
   variables {
+    identifier     = "test"
     public_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   }
 
@@ -43,6 +45,7 @@ run "no_public_subnets" {
   command = plan
 
   variables {
+    identifier     = "test"
     public_subnets = []
   }
 
@@ -65,6 +68,7 @@ run "invalid_private_subnets" {
   command = plan
 
   variables {
+    identifier      = "test"
     private_subnets = ["10.0.0.0", "10.0.1.0/24", ]
   }
 
@@ -75,6 +79,7 @@ run "valid_private_subnets" {
   command = plan
 
   variables {
+    identifier      = "test"
     private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   }
 
@@ -93,6 +98,7 @@ run "no_private_subnets" {
   command = plan
 
   variables {
+    identifier      = "test"
     private_subnets = []
   }
 
