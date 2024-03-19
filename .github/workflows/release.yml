@@ -3,10 +3,10 @@ name: Release
 on:
   push:
     branches: ["main"]
-    workflow_run:
-      workflows: ["lint", "scan", "test"]
-      types:
-        - completed
+  workflow_run:
+    workflows: ["Lint", "Secrets Scan", "Test"]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ permissions:
 jobs:
   release:
     runs-on: "ubuntu-latest"
-    if: ${{ github.event.lint.conclusion == 'success' && github.event.scan.conclusion == 'success' && github.evenet.test.conclusion == 'success'}}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: rymndhng/release-on-push-action@master
