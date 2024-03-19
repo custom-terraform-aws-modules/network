@@ -11,7 +11,7 @@ permissions:
 jobs:
   release:
     runs-on: "ubuntu-latest"
-    needs: [lint, scan, test]
+    if: ${{ github.event.lint.conclusion == 'success' && github.event.scan.conclusion == 'success' && github.evenet.test.conclusion == 'success'}}
 
     steps:
       - uses: rymndhng/release-on-push-action@master
