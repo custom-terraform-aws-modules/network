@@ -19,7 +19,10 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
   availability_zone = length(var.azs) > count.index ? var.azs[count.index] : null
 
-  tags = var.tags
+  tags = merge(
+    { "kubernetes.io/role/elb" = "1" },
+    var.tags
+  )
 }
 
 resource "aws_internet_gateway" "main" {
@@ -74,7 +77,10 @@ resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   availability_zone = length(var.azs) > count.index ? var.azs[count.index] : null
 
-  tags = var.tags
+  tags = merge(
+    { "kubernetes.io/role/internal-elb" = "1" },
+    var.tags
+  )
 }
 
 locals {
