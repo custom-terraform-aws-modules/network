@@ -21,16 +21,17 @@ This module provides a VPC with variable public and private subnets in it. The t
 
 ## Inputs
 
-| Name            | Description                                                                                                                                                                                                            | Type           | Default       | Required |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------- | :------: |
-| identifier      | Unique identifier to differentiate global resources.                                                                                                                                                                   | `string`       | n/a           |   yes    |
-| cidr            | The IPv4 CIDR block of the VPC.                                                                                                                                                                                        | `string`       | "10.0.0.0/16" |    no    |
-| azs             | A list of availability zone names in the region.                                                                                                                                                                       | `list(string)` | []            |    no    |
-| public_subnets  | A list of CIDR blocks for the public subnets inside the VPC.                                                                                                                                                           | `list(string)` | []            |    no    |
-| private_subnets | A list of CIDR blocks for the private subnets inside the VPC.                                                                                                                                                          | `list(string)` | []            |    no    |
-| nat_gws         | Number of NAT Gateways to create. NOTE: for every NAT Gateway a public subnet must exist, also it is recommended to not create more NAT Gateways than private subnets as the excessive NAT Gateways would have no use. | `number`       | 0             |    no    |
-| log_config      | An object for the definition for a flow log of the VPC.                                                                                                                                                                | `object`       | null          |    no    |
-| tags            | A map of tags to add to all resources.                                                                                                                                                                                 | `map(string)`  | {}            |    no    |
+| Name             | Description                                                                                                                                                                                                            | Type           | Default       | Required |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------- | :------: |
+| identifier       | Unique identifier to differentiate global resources.                                                                                                                                                                   | `string`       | n/a           |   yes    |
+| cidr             | The IPv4 CIDR block of the VPC.                                                                                                                                                                                        | `string`       | "10.0.0.0/16" |    no    |
+| azs              | A list of availability zone names in the region.                                                                                                                                                                       | `list(string)` | []            |    no    |
+| public_subnets   | A list of CIDR blocks for the public subnets inside the VPC.                                                                                                                                                           | `list(string)` | []            |    no    |
+| private_subnets  | A list of CIDR blocks for the private subnets inside the VPC.                                                                                                                                                          | `list(string)` | []            |    no    |
+| enable_hostnames | A flag to wether or not allow private DNS hostnames within the VPC.                                                                                                                                                    | `bool`         | false         |    no    |
+| nat_gws          | Number of NAT Gateways to create. NOTE: for every NAT Gateway a public subnet must exist, also it is recommended to not create more NAT Gateways than private subnets as the excessive NAT Gateways would have no use. | `number`       | 0             |    no    |
+| log_config       | An object for the definition for a flow log of the VPC.                                                                                                                                                                | `object`       | null          |    no    |
+| tags             | A map of tags to add to all resources.                                                                                                                                                                                 | `map(string)`  | {}            |    no    |
 
 ### `log_config`
 
@@ -57,12 +58,13 @@ This module provides a VPC with variable public and private subnets in it. The t
 module "network" {
   source = "github.com/custom-terraform-aws-modules/network"
 
-  identifier      = "example-network-dev"
-  cidr            = "10.0.0.0/16"
-  azs             = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
-  public_subnets  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  private_subnets = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
-  nat_gws         = 3
+  identifier       = "example-network-dev"
+  cidr             = "10.0.0.0/16"
+  azs              = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
+  public_subnets   = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  private_subnets  = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  enable_hostnames = true
+  nat_gws          = 3
 
   log_config = {
     traffic_type      = "ALL"

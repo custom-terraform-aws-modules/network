@@ -43,6 +43,12 @@ variable "private_subnets" {
   }
 }
 
+variable "enable_hostnames" {
+  description = "A flag to wether or not allow private DNS hostnames within the VPC."
+  type        = bool
+  default     = false
+}
+
 variable "nat_gws" {
   description = "Number of NAT Gateways to create."
   type        = number
