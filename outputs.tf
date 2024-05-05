@@ -13,6 +13,11 @@ output "private_subnets" {
   value       = try(aws_subnet.private[*].id, [])
 }
 
+output "private_route_tables" {
+  description = "List of IDs of the private route tables."
+  value       = try(aws_route_table.private[*].id, [])
+}
+
 output "internet_gw" {
   description = "The ID of the Internet Gateway."
   value       = try(aws_internet_gateway.main.id, null)
